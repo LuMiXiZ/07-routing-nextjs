@@ -15,40 +15,41 @@ export interface FetchNotesParams {
   page: number;
   perPage: number;
   search?: string;
+  tag?: string;
 }
 
-export async function fetchNotes(
-  { page = 1, perPage = 12, search }: FetchNotesParams = {
+export const fetchNotes = async (
+  { page = 1, perPage = 12, search, tag }: FetchNotesParams = {
     page: 1,
     perPage: 12,
   }
-): Promise<NoteSearchResponse> {
-  const params: FetchNotesParams = {
-    page,
-    perPage,
-  };
+): Promise<NoteSearchResponse> => {
+  const params: FetchNotesParams = { page, perPage };
   if (search && search.trim() !== "") {
     params.search = search.trim();
   }
+  if (tag && tag !== "All") {
+    params.tag = tag.trim();
+  }
   const response = await axios.get<NoteSearchResponse>(`/notes`, { params });
   return response.data;
-}
+};
 
-export async function createNote(note: {
+export const createNote = async (note: {
   title: string;
   content: string;
   tag: NoteTag;
-}): Promise<Note> {
+}): Promise<Note> => {
   const response = await axios.post<Note>("/notes", note);
   return response.data;
-}
+};
 
-export async function deleteNote(id: string): Promise<Note> {
+export const deleteNote = async (id: string): Promise<Note> => {
   const response = await axios.delete<Note>(`/notes/${id}`);
   return response.data;
-}
+};
 
-export async function fetchNoteById(id: string): Promise<Note> {
+export const fetchNoteById = async (id: string): Promise<Note> => {
   const response = await axios.get<Note>(`/notes/${id}`);
   return response.data;
-}
+};
